@@ -5,6 +5,8 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import com.jp.co.springboot.api.client.external.request.DeeplTranslateV2Request;
 import com.jp.co.springboot.api.client.external.response.DeeplTranslateV2Response;
@@ -38,11 +40,15 @@ public class DeeplApiClient {
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", this.authSuffix + this.apiKey)
 				.body(Mono.just(request), DeeplTranslateV2Request.class)
-				.retrieve()
-				.bodyToMono(DeeplTranslateV2Response.class)
+				.retrieve() // レスポンスを抽出する方法を宣言
+				.bodyToMono(DeeplTranslateV2Response.class) // toEntityでMono<ResponsEntity<Obj>>で取得することもできる
 				.block();
+		} catch(WebClientResponseException  e) {
+			throw new Exception("API Error HTTP Status:" + e.getStatusCode());
+		} catch(WebClientRequestException e) {
+			throw new Exception("API Error reason:" + e.getMessage());
 		} catch(Exception e) {
-			throw new Exception("API Error");
+			throw e;
 		}
 		return response;
 	}
