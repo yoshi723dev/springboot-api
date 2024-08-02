@@ -8,16 +8,16 @@ import lombok.ToString;
 @Data
 @ToString
 public class DeeplTranslateV2Response {
-	
-	@JsonProperty("translations")
-	private Translations[] translations;
-	
-	@Data
-	public static class Translations {
-		@JsonProperty("detected_source_language")
-		private String detectedSourceLanguage;
-		
-		@JsonProperty("text")
-		private String text;
-	}
+    
+    @JsonProperty("translations")
+    private Translations[] translations;
+    
+    @Data
+    public static class Translations {
+        @JsonProperty("detected_source_language")
+        private String detectedSourceLanguage;
+        
+        @JsonProperty("text")
+        private String text;
+    }
 }

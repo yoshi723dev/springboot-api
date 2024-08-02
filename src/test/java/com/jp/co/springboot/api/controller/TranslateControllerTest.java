@@ -33,7 +33,7 @@ public class TranslateControllerTest {
         translation.setText(translatedText);
         mockResponse.setTranslations(new Translations[] {translation});
         when(deeplApiClient.callTranslateV2(any(DeeplTranslateV2Request.class))).thenReturn(mockResponse);
-    	
+        
         mockMvc.perform(MockMvcRequestBuilders.get("/").param("message", new String[] {"てすと"}))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Test<br>"));
@@ -50,7 +50,7 @@ public class TranslateControllerTest {
         translation2.setText(translatedText2);
         mockResponse.setTranslations(new Translations[] {translation1, translation2});
         when(deeplApiClient.callTranslateV2(any(DeeplTranslateV2Request.class))).thenReturn(mockResponse);
-    	
+        
         mockMvc.perform(MockMvcRequestBuilders.get("/").param("message", new String[] {"てすと","こんにちは"}))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Test<br>Hello<br>"));
@@ -66,8 +66,8 @@ public class TranslateControllerTest {
     
     @Test
     public void translate_error02() throws Exception {
-    	when(deeplApiClient.callTranslateV2(any(DeeplTranslateV2Request.class))).thenThrow(new Exception("call error"));
-    	
+        when(deeplApiClient.callTranslateV2(any(DeeplTranslateV2Request.class))).thenThrow(new Exception("call error"));
+        
         mockMvc.perform(MockMvcRequestBuilders.get("/").param("message", new String[] {"てすと"}))
                 .andExpect(status().isOk())
                 .andExpect(content().string("call error"));

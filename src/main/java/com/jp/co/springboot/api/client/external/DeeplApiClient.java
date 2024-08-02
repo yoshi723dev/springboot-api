@@ -28,30 +28,30 @@ public class DeeplApiClient {
     
     @Value("${deepl.translate.path}")
     private String translatePath;
-	
-	public DeeplTranslateV2Response callTranslateV2(DeeplTranslateV2Request request) throws Exception {
-		WebClient client = null;
-		DeeplTranslateV2Response response = new DeeplTranslateV2Response();
-		
-		try {
-			client = WebClient.builder().baseUrl(this.baseUrl).build();
-			response = client.post()
-				.uri(this.translatePath)
-				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", this.authSuffix + this.apiKey)
-				.body(Mono.just(request), DeeplTranslateV2Request.class)
-				.retrieve() // レスポンスを抽出する方法を宣言
-				.bodyToMono(DeeplTranslateV2Response.class) // toEntityでMono<ResponsEntity<Obj>>で取得することもできる
-				.block();
-		} catch(WebClientResponseException  e) {
-			throw new Exception("API Error HTTP Status:" + e.getStatusCode());
-		} catch(WebClientRequestException e) {
-			throw new Exception("API Error reason:" + e.getMessage());
-		} catch(Exception e) {
-			throw e;
-		}
-		return response;
-	}
-	
+    
+    public DeeplTranslateV2Response callTranslateV2(DeeplTranslateV2Request request) throws Exception {
+        WebClient client = null;
+        DeeplTranslateV2Response response = new DeeplTranslateV2Response();
+        
+        try {
+            client = WebClient.builder().baseUrl(this.baseUrl).build();
+            response = client.post()
+                .uri(this.translatePath)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", this.authSuffix + this.apiKey)
+                .body(Mono.just(request), DeeplTranslateV2Request.class)
+                .retrieve() // レスポンスを抽出する方法を宣言
+                .bodyToMono(DeeplTranslateV2Response.class) // toEntityでMono<ResponsEntity<Obj>>で取得することもできる
+                .block();
+        } catch(WebClientResponseException  e) {
+            throw new Exception("API Error HTTP Status:" + e.getStatusCode());
+        } catch(WebClientRequestException e) {
+            throw new Exception("API Error reason:" + e.getMessage());
+        } catch(Exception e) {
+            throw e;
+        }
+        return response;
+    }
+    
 
 }

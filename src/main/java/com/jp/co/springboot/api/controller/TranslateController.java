@@ -11,31 +11,31 @@ import com.jp.co.springboot.api.common.ErrorMessage;
 
 @RestController
 public class TranslateController {
-	
-	@Autowired
-	private DeeplApiClient client;
+    
+    @Autowired
+    private DeeplApiClient client;
 
     @GetMapping(value="/")
     public String translate(@RequestParam(name = "message", required = false) String[] message) {
-    	if (message == null) {
-    		return ErrorMessage.ERR_E0001;
-    	}
-    	
-    	DeeplTranslateV2Response response = new DeeplTranslateV2Response();
-    	DeeplTranslateV2Request request = new DeeplTranslateV2Request();
-    	request.setText(message);
-    	request.setTargetLang("EN");
-    	try {
-    		response = this.client.callTranslateV2(request);
-    	} catch (Exception e) {
-    		return e.getMessage();
-    	}
-    	
-    	String result = "";
-    	for (int i=0; i<response.getTranslations().length; i++) {
-    		result = result + response.getTranslations()[i].getText() + "<br>";
-    	}
-    	
+        if (message == null) {
+            return ErrorMessage.ERR_E0001;
+        }
+        
+        DeeplTranslateV2Response response = new DeeplTranslateV2Response();
+        DeeplTranslateV2Request request = new DeeplTranslateV2Request();
+        request.setText(message);
+        request.setTargetLang("EN");
+        try {
+            response = this.client.callTranslateV2(request);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+        
+        String result = "";
+        for (int i=0; i<response.getTranslations().length; i++) {
+            result = result + response.getTranslations()[i].getText() + "<br>";
+        }
+        
         return result;
     }
 }
