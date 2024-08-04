@@ -2,6 +2,7 @@ package com.jp.co.springboot.api.client.external;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -10,6 +11,8 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import com.jp.co.springboot.api.client.external.request.DeeplTranslateV2Request;
 import com.jp.co.springboot.api.client.external.response.DeeplTranslateV2Response;
+import com.jp.co.springboot.api.common.ErrorMessage;
+import com.jp.co.springboot.api.exception.ApiCommonException;
 
 import reactor.core.publisher.Mono;
 
@@ -44,11 +47,11 @@ public class DeeplApiClient {
                 .bodyToMono(DeeplTranslateV2Response.class) // toEntityでMono<ResponsEntity<Obj>>で取得することもできる
                 .block();
         } catch(WebClientResponseException  e) {
-            throw new Exception("API Error HTTP Status:" + e.getStatusCode());
+        	throw new ApiCommonException(e.getStatusCode().value(), ErrorMessage.ERR_API_E0001);
         } catch(WebClientRequestException e) {
-            throw new Exception("API Error reason:" + e.getMessage());
+        	throw new ApiCommonException(HttpStatus.GATEWAY_TIMEOUT.value(), ErrorMessage.ERR_API_E0002);
         } catch(Exception e) {
-            throw e;
+        	throw new ApiCommonException(HttpStatus.INTERNAL_SERVER_ERROR.value(), ErrorMessage.ERR_API_E0099);
         }
         return response;
     }

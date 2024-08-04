@@ -16,21 +16,17 @@ public class TranslateController {
     private DeeplApiClient client;
 
     @GetMapping(value="/")
-    public String translate(@RequestParam(name = "message", required = false) String[] message) {
+    public String translate(@RequestParam(name = "message", required = false) String[] message) throws Exception {
         if (message == null) {
-            return ErrorMessage.ERR_E0001;
+            throw new Exception(ErrorMessage.ERR_E0001);
         }
         
         DeeplTranslateV2Response response = new DeeplTranslateV2Response();
         DeeplTranslateV2Request request = new DeeplTranslateV2Request();
         request.setText(message);
         request.setTargetLang("EN");
-        try {
-            response = this.client.callTranslateV2(request);
-        } catch (Exception e) {
-            return e.getMessage();
-        }
-        
+        response = this.client.callTranslateV2(request);
+
         String result = "";
         for (int i=0; i<response.getTranslations().length; i++) {
             result = result + response.getTranslations()[i].getText() + "<br>";

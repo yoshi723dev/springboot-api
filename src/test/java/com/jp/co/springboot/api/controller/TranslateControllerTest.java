@@ -16,6 +16,7 @@ import com.jp.co.springboot.api.client.external.request.DeeplTranslateV2Request;
 import com.jp.co.springboot.api.client.external.response.DeeplTranslateV2Response;
 import com.jp.co.springboot.api.client.external.response.DeeplTranslateV2Response.Translations;
 import com.jp.co.springboot.api.common.ErrorMessage;
+import com.jp.co.springboot.api.exception.ApiCommonException;
 
 @WebMvcTest(TranslateController.class)
 public class TranslateControllerTest {
@@ -60,16 +61,36 @@ public class TranslateControllerTest {
     public void translate_error01() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(ErrorMessage.ERR_E0001));
+                .andExpect(content().string("{\"status\":400,\"message\":\"No message entered.\"}"));
     }
-    
-    
+
     @Test
     public void translate_error02() throws Exception {
-        when(deeplApiClient.callTranslateV2(any(DeeplTranslateV2Request.class))).thenThrow(new Exception("call error"));
+        when(deeplApiClient.callTranslateV2(any(DeeplTranslateV2Request.class)))
+        	.thenThrow(new ApiCommonException(400, ErrorMessage.ERR_API_E0001));
         
         mockMvc.perform(MockMvcRequestBuilders.get("/").param("message", new String[] {"てすと"}))
                 .andExpect(status().isOk())
-                .andExpect(content().string("call error"));
+                .andExpect(content().string("{\"status\":400,\"message\":\"API Parameter Error.\"}"));
+    }
+
+    @Test
+    public void translate_error03() throws Exception {
+        when(deeplApiClient.callTranslateV2(any(DeeplTranslateV2Request.class)))
+        	.thenThrow(new ApiCommonException(503, ErrorMessage.ERR_API_E0002));
+        
+        mockMvc.perform(MockMvcRequestBuilders.get("/").param("message", new String[] {"てすと"}))
+                .andExpect(status().isOk())
+                .andExpect(content().string("{\"status\":503,\"message\":\"API Timeout Error.\"}"));
+    }
+    
+    @Test
+    public void translate_error04() throws Exception {
+        when(deeplApiClient.callTranslateV2(any(DeeplTranslateV2Request.class)))
+        	.thenThrow(new ApiCommonException(500, ErrorMessage.ERR_API_E0099));
+        
+        mockMvc.perform(MockMvcRequestBuilders.get("/").param("message", new String[] {"てすと"}))
+                .andExpect(status().isOk())
+                .andExpect(content().string("{\"status\":500,\"message\":\"API Error.\"}"));
     }
 }

@@ -7,7 +7,7 @@ import lombok.ToString;
 
 @Data
 @ToString
-public class DeeplTranslateV2Response {
+public class DeeplTranslateV2Response extends AbstractResponse {
     
     @JsonProperty("translations")
     private Translations[] translations;
